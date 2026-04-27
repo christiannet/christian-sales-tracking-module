@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Promoter } from '../models/promoter.model';
 import { IPromoterService } from '../di/interfaces';
-import { environment } from '../../../../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 const API = environment.apiUrl;
 
