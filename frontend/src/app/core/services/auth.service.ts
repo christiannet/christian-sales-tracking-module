@@ -3,8 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap, map } from 'rxjs';
 import { Promoter } from '../models/promoter.model';
 import { IAuthService } from '../di/interfaces';
+import { environment } from '../../../../../environments/environment';
 
-const API          = 'http://localhost:3002/api';
+const API = environment.apiUrl;
 const USER_KEY     = 'salesTracker_currentUser';
 const TOKEN_KEY    = 'salesTracker_token';
 

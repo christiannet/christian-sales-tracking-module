@@ -19,7 +19,10 @@ getDatabase();
 
 const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:4200')
   .split(',')
-  .map(o => o.trim());
+  .map(o => {
+    const v = o.trim();
+    return v.startsWith('http') ? v : `https://${v}`;
+  });
 
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());

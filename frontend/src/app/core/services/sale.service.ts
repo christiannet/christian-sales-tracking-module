@@ -3,8 +3,9 @@ import { Observable } from 'rxjs';
 import { Sale, CreateSaleDto } from '../models/sale.model';
 import { Progress } from '../models/progress.model';
 import { ISaleService } from '../di/interfaces';
+import { environment } from '../../../../../environments/environment';
 
-const API = 'http://localhost:3002/api';
+const API = environment.apiUrl;
 
 export class SaleService implements ISaleService {
   public constructor(private readonly http: HttpClient) {}

@@ -1,0 +1,42 @@
+services:
+  # ── Backend: Node.js / Express API ────────────────────────────────────────
+  - type: web
+    name: sales-tracking-api
+    env: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_PATH
+        value: /tmp/sales-tracking.db
+      # Populated automatically from the static site's hostname once Render
+      # resolves both services. The backend normalises the value to a full URL.
+      - key: CORS_ORIGIN
+        fromService:
+          name: sales-tracking-frontend
+          type: web
+          property: host
+
+  # ── Frontend: Angular SPA served via Render Static Sites ──────────────────
+  - type: web
+    name: sales-tracking-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist/sales-tracking-frontend/browser
+    # SPA fallback: all unknown paths serve index.html so Angular Router works
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      # Populated automatically from the backend service's hostname.
+      # scripts/set-env.js reads this and writes environment.production.ts
+      # before ng build runs.
+      - key: NG_API_HOST
+        fromService:
+          name: sales-tracking-api
+          type: web
+          property: host
