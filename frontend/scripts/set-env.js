@@ -1,13 +1,21 @@
 // Generates environment.production.ts before ng build.
-// On Render: NG_API_HOST is injected via fromService reference.
-// Locally:   falls back to localhost so the build still works.
+// Priority:
+//   1. NG_API_URL  — full URL, set manually in Render dashboard
+//   2. NG_API_HOST — hostname only (fromService), https:// is prepended
+//   3. fallback    — http://localhost:3002/api for local production builds
 const fs   = require('fs');
 const path = require('path');
 
-const host   = process.env.NG_API_HOST || '';
-const apiUrl = host
-  ? (host.startsWith('http') ? `${host}/api` : `https://${host}/api`)
-  : 'http://localhost:3002/api';
+let apiUrl = process.env.NG_API_URL || '';
+
+if (!apiUrl) {
+  const host = process.env.NG_API_HOST || '';
+  if (host) {
+    apiUrl = (host.startsWith('http') ? host : `https://${host}`) + '/api';
+  } else {
+    apiUrl = 'http://localhost:3002/api';
+  }
+}
 
 const content = `export const environment = {
   production: true,

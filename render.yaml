@@ -32,9 +32,13 @@ services:
         source: /*
         destination: /index.html
     envVars:
-      # Populated automatically from the backend service's hostname.
-      # scripts/set-env.js reads this and writes environment.production.ts
-      # before ng build runs.
+      # Full backend URL — set this manually in the Render dashboard after
+      # the first deploy so the Angular bundle gets the correct API endpoint.
+      # Example: https://sales-tracking-api-xxxx.onrender.com
+      - key: NG_API_URL
+        sync: false
+      # Fallback: populated automatically from the backend hostname (no https://).
+      # set-env.js adds the protocol. Used if NG_API_URL is not set.
       - key: NG_API_HOST
         fromService:
           name: sales-tracking-api
