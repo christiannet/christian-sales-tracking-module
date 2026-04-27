@@ -11,13 +11,10 @@ services:
         value: production
       - key: DB_PATH
         value: /tmp/sales-tracking.db
-      # Populated automatically from the static site's hostname once Render
-      # resolves both services. The backend normalises the value to a full URL.
+      # Full frontend URL — set this manually in the Render dashboard.
+      # Example: https://sales-tracking-frontend-xxxx.onrender.com
       - key: CORS_ORIGIN
-        fromService:
-          name: sales-tracking-frontend
-          type: web
-          property: host
+        sync: false
 
   # ── Frontend: Angular SPA served via Render Static Sites ──────────────────
   - type: web
