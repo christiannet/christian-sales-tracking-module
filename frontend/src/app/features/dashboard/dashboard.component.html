@@ -1,0 +1,39 @@
+<div class="dashboard">
+
+  <!-- ── Toolbar ───────────────────────────────────────── -->
+  <mat-toolbar color="primary" class="toolbar">
+    <mat-icon class="toolbar-logo">trending_up</mat-icon>
+    <span class="toolbar-title">Sales Tracker</span>
+    <span class="spacer"></span>
+    @if (currentUser) {
+      <div class="toolbar-user">
+        <mat-icon>account_circle</mat-icon>
+        <span>{{ currentUser.name }}</span>
+      </div>
+      <button mat-icon-button (click)="logout()" matTooltip="Logout">
+        <mat-icon>logout</mat-icon>
+      </button>
+    }
+  </mat-toolbar>
+
+  <!-- ── Page content ──────────────────────────────────── -->
+  <div class="content">
+
+    <!-- ── Progress card ─────────────────────────────── -->
+    @if (progress(); as p) {
+      <app-progress-card [progress]="p" />
+    }
+
+    <!-- ── Lower two-column grid ─────────────────────── -->
+    <div class="grid-2col">
+      @if (currentUser) {
+        <app-sale-form
+          [promoterId]="currentUser.id"
+          [promoterName]="currentUser.name"
+          (saleSaved)="loadData()" />
+      }
+      <app-sales-history [sales]="sales()" [loading]="loading()" />
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /dashboard -->

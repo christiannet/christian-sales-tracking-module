@@ -1,0 +1,26 @@
+<div
+  class="badge"
+  [class.badge--earned]="earned"
+  [class.badge--locked]="!earned"
+  [matTooltip]="earned ? config.description : 'Not earned yet — keep selling!'"
+  matTooltipPosition="above">
+
+  <div class="badge__icon-wrapper">
+    <mat-icon
+      class="badge__icon"
+      [ngStyle]="{ color: earned ? config.color : '#bdbdbd' }">
+      {{ config.icon }}
+    </mat-icon>
+
+    @if (earned) {
+      <div class="badge__glow" [ngStyle]="{ 'box-shadow': '0 0 18px 6px ' + config.color + '55' }"></div>
+    }
+  </div>
+
+  <span class="badge__threshold">{{ config.threshold }}%</span>
+  <span class="badge__label">{{ config.label }}</span>
+
+  @if (earned) {
+    <mat-icon class="badge__check">check_circle</mat-icon>
+  }
+</div>

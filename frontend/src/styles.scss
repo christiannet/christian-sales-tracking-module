@@ -1,0 +1,319 @@
+// =============================================================================
+// GLOBAL STYLES — styles.scss
+// =============================================================================
+// Archivo de estilos globales de la aplicación. Contiene:
+//   1. Variables CSS del tema oscuro (design tokens)
+//   2. Reset y estilos base de HTML/body
+//   3. Overrides del tema oscuro para Angular Material (MDC)
+//   4. Estilos de ngx-toastr
+//   5. Scrollbar personalizado
+// =============================================================================
+
+
+// -----------------------------------------------------------------------------
+// 1. DESIGN TOKENS (CSS custom properties)
+// -----------------------------------------------------------------------------
+// Paleta de superficies: de más oscuro (base) a más claro (surface-3).
+// Usar en orden ascendente para crear jerarquía visual: fondo → tarjeta → input
+// → fila destacada.
+//
+// Paleta de texto: opacidades sobre blanco para mantener contraste en oscuro.
+//   --text-primary   (87%) → contenido principal, valores, labels de tabla
+//   --text-secondary (60%) → subtítulos, placeholders, cabeceras de tabla
+//   --text-disabled  (38%) → texto desactivado (mismo valor que Material spec)
+//
+// Colores semánticos:
+//   --accent     → azul claro, color principal de la app (botones, íconos activos)
+//   --accent-dim → versión oscura del accent para fondos de chips/badges
+//   --success    → verde para valores positivos (montos en tabla)
+//   --warning    → naranja/ámbar para alertas o metas parciales
+//   --danger     → rojo suave para errores
+//   --border     → blanco muy transparente, líneas divisorias sutiles
+//   --shadow     → negro semi-transparente para box-shadows
+//
+// Escala tipográfica — texto (rem):
+//   Los tokens siguen una escala semántica, no numérica. El tamaño raíz es
+//   16px (navegador por defecto), así que 1rem = 16px.
+//   --font-size-2xs  (0.70rem / ~11px) → ticks de escala, metadatos mínimos
+//   --font-size-xs   (0.75rem / 12px)  → etiquetas de KPI, chips, badges
+//   --font-size-sm   (0.875rem / 14px) → mensajes de error, texto auxiliar
+//   --font-size-base (0.9rem / ~14px)  → cuerpo de sección, subtítulos
+//   --font-size-md   (1rem / 16px)     → botones, inputs, texto de acción
+//   --font-size-lg   (1.15rem / ~18px) → título de toolbar y sección
+//   --font-size-display (1.6rem / ~26px) → valores KPI destacados
+//
+// Escala tipográfica — íconos (px):
+//   --icon-size-sm  (18px) → íconos en títulos de sección, mensajes inline
+//   --icon-size-md  (20px) → avatar en mat-card-header
+//   --icon-size-lg  (28px) → logo de toolbar
+//   --icon-size-xl  (40px) → ícono de marca en pantalla de login
+//   --icon-size-2xl (48px) → íconos decorativos de estado vacío
+// -----------------------------------------------------------------------------
+:root {
+  // Superficies
+  --bg-base:       #0f1117;
+  --bg-surface:    #1a1d27;
+  --bg-surface-2:  #242736;
+  --bg-surface-3:  #2e3247;
+
+  // Texto
+  --text-primary:   rgba(255, 255, 255, 0.87);
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-disabled:  rgba(255, 255, 255, 0.38);
+
+  // Colores semánticos
+  --accent:     #7eb8f7;
+  --accent-dim: #1a3358;
+  --success:    #81c784;
+  --warning:    #ffb74d;
+  --danger:     #ef9a9a;
+  --border:     rgba(255, 255, 255, 0.08);
+  --shadow:     rgba(0, 0, 0, 0.5);
+
+  // Escala tipográfica — texto
+  --font-size-2xs:     0.7rem;    // ~11px — ticks de escala, metadatos mínimos
+  --font-size-xs:      0.75rem;   //  12px — etiquetas de KPI, chips, badges
+  --font-size-sm:      0.875rem;  //  14px — mensajes de error, texto auxiliar
+  --font-size-base:    0.9rem;    // ~14px — cuerpo de sección, subtítulos
+  --font-size-md:      1rem;      //  16px — botones, inputs, texto de acción
+  --font-size-lg:      1.15rem;   // ~18px — título de toolbar y tarjetas
+  --font-size-display: 1.6rem;    // ~26px — valores KPI destacados
+
+  // Escala tipográfica — íconos Material
+  --icon-size-sm:  18px;   // íconos en títulos de sección, mensajes inline
+  --icon-size-md:  20px;   // avatar en mat-card-header
+  --icon-size-lg:  28px;   // logo de toolbar
+  --icon-size-xl:  40px;   // ícono de marca en login
+  --icon-size-2xl: 48px;   // íconos decorativos de estado vacío
+}
+
+
+// -----------------------------------------------------------------------------
+// 2. BASE
+// -----------------------------------------------------------------------------
+// `color-scheme: dark` le indica al navegador que use scrollbars, inputs y
+// controles del sistema en modo oscuro, evitando destellos blancos en inputs
+// nativos.
+// -----------------------------------------------------------------------------
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+// -----------------------------------------------------------------------------
+// 3. ANGULAR MATERIAL — OVERRIDES TEMA OSCURO
+// -----------------------------------------------------------------------------
+// Cada sección sobreescribe los tokens MDC o clases de Angular Material para
+// que todos los componentes respeten la paleta oscura sin necesidad de repetir
+// estilos en cada componente hijo.
+// -----------------------------------------------------------------------------
+
+// ── Tarjetas ─────────────────────────────────────────────────────────────────
+// Aplica a TODOS los `<mat-card>` de la app (incluyendo componentes hijos).
+// El borde rosa #e91e8c es la identidad visual del proyecto.
+// border-radius y box-shadow centralizados aquí para no repetirlos en cada
+// componente standalone.
+.mat-mdc-card {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid #e91e8c !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+// ── Toolbar ───────────────────────────────────────────────────────────────────
+// El componente dashboard define `.toolbar` con `position: sticky`; este
+// override solo establece colores para que el fondo no quede blanco por defecto.
+.mat-toolbar {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+// ── Campos de formulario ──────────────────────────────────────────────────────
+// `.mdc-text-field` es el contenedor interno del input en Material MDC.
+// El borde del outline se divide en tres segmentos MDC (leading, notch,
+// trailing) que deben colorearse por separado — de ahí los tres selectores
+// repetidos para estado normal y hover.
+// El label flotante usa dos clases distintas según la versión de Material.
+.mat-mdc-form-field {
+  .mdc-text-field {
+    background-color: var(--bg-surface-2) !important;
+    border-radius: 8px !important;
+  }
+
+  // Borde en reposo
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+    border-color: var(--border) !important;
+  }
+
+  // Borde al pasar el puntero
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__leading,
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__notch,
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__trailing {
+    border-color: var(--accent) !important;
+  }
+
+  .mdc-floating-label,
+  .mat-mdc-floating-label { color: var(--text-secondary) !important; }
+
+  input.mat-mdc-input-element,
+  textarea.mat-mdc-input-element { color: var(--text-primary) !important; }
+}
+
+// ── Select y opciones ─────────────────────────────────────────────────────────
+// El panel de opciones se renderiza fuera del componente (en el overlay de
+// Angular CDK), por lo que no puede ser estilizado desde el SCSS del componente
+// y debe hacerse globalmente.
+.mat-mdc-select-value { color: var(--text-primary) !important; }
+.mat-mdc-select-arrow  { color: var(--text-secondary) !important; }
+
+.mat-mdc-option {
+  background-color: var(--bg-surface-2) !important;
+  color: var(--text-primary) !important;
+
+  &:hover:not(.mdc-list-item--disabled) { background-color: var(--bg-surface-3) !important; }
+  &.mdc-list-item--selected             { background-color: var(--accent-dim) !important; }
+}
+
+.mat-mdc-autocomplete-panel,
+.mat-mdc-select-panel {
+  background-color: var(--bg-surface-2) !important;
+  border: 1px solid var(--border) !important;
+}
+
+// ── Tabla ─────────────────────────────────────────────────────────────────────
+// La fila de cabecera usa --bg-surface-2 para distinguirse visualmente del
+// cuerpo de la tabla (--bg-surface). El hover de fila no cambia el color de
+// la fila completa, sino de cada celda individual (comportamiento MDC).
+.mat-mdc-table {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+}
+
+.mat-mdc-header-row  { background-color: var(--bg-surface-2) !important; }
+.mat-mdc-header-cell { color: var(--text-secondary) !important; border-bottom-color: var(--border) !important; }
+.mat-mdc-cell        { color: var(--text-primary) !important;  border-bottom-color: var(--border) !important; }
+
+.mat-mdc-row:hover .mat-mdc-cell { background-color: var(--bg-surface-2) !important; }
+
+// ── Botones ───────────────────────────────────────────────────────────────────
+// El border-radius de 24px aplica a todas las variantes de botón Material para
+// lograr el estilo de píldora redondeada de forma global.
+//
+// Estado desactivado de `mat-raised-button`: Material por defecto aplica un
+// fondo casi negro en modo oscuro que hace ilegible el label. Se eleva la
+// superficie a --bg-surface-3 y se usa la opacidad 38% del texto (valor
+// estándar de Material Design para estados desactivados).
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button {
+  border-radius: 24px !important;
+}
+
+.mat-mdc-outlined-button:not(:disabled) {
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+.mat-mdc-raised-button:disabled {
+  background-color: var(--bg-surface-3) !important;
+  color: rgba(255, 255, 255, 0.38) !important;
+
+  .mdc-button__label,
+  .mat-icon { color: rgba(255, 255, 255, 0.38) !important; }
+}
+
+// ── Subtítulo de tarjeta ──────────────────────────────────────────────────────
+// Material asigna un gris muy oscuro por defecto; se eleva a un gris claro
+// casi blanco para mejorar legibilidad sobre superficies oscuras.
+.mat-mdc-card-subtitle { color: #bebdbd !important; }
+
+// ── Íconos de prefijo en campos de formulario ─────────────────────────────────
+// `mat-icon` y `mat-datepicker-toggle` en posición `matPrefix` se fuerzan a
+// blanco para contrastar con el fondo oscuro del input. Se necesitan ambos
+// atributos (`matprefix` / `matPrefix`) porque Angular emite el atributo en
+// minúsculas en tiempo de ejecución pero el selector puede variar según versión.
+.mat-mdc-form-field {
+  .mat-icon[matprefix],
+  .mat-icon[matPrefix] {
+    color: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+    margin-right: 6px;
+  }
+
+  mat-datepicker-toggle[matprefix],
+  mat-datepicker-toggle[matPrefix] {
+    color: #ffffff !important;
+  }
+}
+
+// ── Divisor ───────────────────────────────────────────────────────────────────
+.mat-divider { border-color: var(--border) !important; }
+
+// ── Snackbar ──────────────────────────────────────────────────────────────────
+// Reservado para mensajes de sistema que no sean del flujo principal de la app.
+// El flujo principal usa ngx-toastr (ver sección 4).
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: var(--bg-surface-3) !important;
+  color: var(--text-primary) !important;
+}
+
+// ── Barra de progreso ─────────────────────────────────────────────────────────
+// Se sobreescriben los custom properties MDC para aumentar el grosor de la
+// barra (12px) y suavizar el track con baja opacidad. El border-radius redondea
+// los extremos de la barra activa.
+.mat-mdc-progress-bar {
+  border-radius: 6px;
+  --mdc-linear-progress-track-height:            12px;
+  --mdc-linear-progress-active-indicator-height: 12px;
+  --mdc-linear-progress-track-color:             rgba(255, 255, 255, 0.1);
+}
+
+
+// -----------------------------------------------------------------------------
+// 4. NGX-TOASTR
+// -----------------------------------------------------------------------------
+// Los toasts se renderizan en un overlay fuera del árbol de componentes, por lo
+// que solo pueden estilizarse globalmente. El selector `#toast-container` tiene
+// mayor especificidad que las clases base de toastr, lo que evita usar
+// `!important` en la mayoría de casos (se mantiene por consistencia con el
+// resto del archivo).
+//
+//   .toast-success → confirmación de acciones exitosas (verde)
+//   .toast-error   → fallos de API o validación crítica (rojo)
+//   .toast-warning → alertas no bloqueantes (amarillo; texto oscuro para
+//                    contraste, ya que el fondo es claro)
+// -----------------------------------------------------------------------------
+#toast-container {
+  .toast-success { background-color: #388e3c !important; }
+  .toast-error   { background-color: #c62828 !important; }
+  .toast-warning { background-color: #f9a825 !important; color: #1a1a1a !important; }
+}
+
+
+// -----------------------------------------------------------------------------
+// 5. SCROLLBAR PERSONALIZADO (Webkit)
+// -----------------------------------------------------------------------------
+// Solo aplica en navegadores basados en Chromium y Safari. Firefox usa
+// `scrollbar-color` / `scrollbar-width` (no implementado aquí).
+// El track usa --bg-base para mezclarse con el fondo; el thumb usa
+// --bg-surface-3 para ser visible sin distraer.
+// -----------------------------------------------------------------------------
+::-webkit-scrollbar            { width: 6px; height: 6px; }
+::-webkit-scrollbar-track      { background: var(--bg-base); }
+::-webkit-scrollbar-thumb      { background: var(--bg-surface-3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover{ background: #3d4266; }

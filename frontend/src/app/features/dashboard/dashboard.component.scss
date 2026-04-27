@@ -1,0 +1,63 @@
+// ── Layout ──────────────────────────────────────────────────────────────────
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-base);
+}
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--bg-surface) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4) !important;
+  border-bottom: 1px solid var(--border);
+}
+
+.toolbar-logo {
+  margin-right: 8px;
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  color: var(--accent);
+  filter: drop-shadow(0 0 6px rgba(126, 184, 247, 0.35));
+}
+
+.toolbar-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text-primary);
+}
+
+.spacer { flex: 1 1 auto; }
+
+.toolbar-user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 8px;
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.content {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+}
+
+// ── Two-column grid ──────────────────────────────────────────────────────────
+.grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+
+  @media (max-width: 820px) {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,57 @@
+<mat-card class="card progress-card">
+  <mat-card-header>
+    <mat-icon mat-card-avatar class="avatar-icon">bar_chart</mat-icon>
+    <mat-card-title>Monthly Goal Progress</mat-card-title>
+    <mat-card-subtitle>{{ monthLabel() }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- KPI row -->
+    <div class="kpi-row">
+      <div class="kpi">
+        <span class="kpi__label">Sales this month</span>
+        <span class="kpi__value kpi__value--sales">${{ progress().currentSales | number:'1.2-2' }}</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi__label">Monthly goal</span>
+        <span class="kpi__value">${{ progress().monthlyGoal | number:'1.2-2' }}</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi__label">Remaining</span>
+        <span class="kpi__value kpi__value--remaining">${{ remaining() | number:'1.2-2' }}</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi__label">Completion</span>
+        <span class="kpi__value kpi__value--pct">{{ progress().percentage | number:'1.1-1' }}%</span>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <mat-progress-bar
+      mode="determinate"
+      [value]="progress().percentage"
+      [color]="progressBarColor()"
+      class="progress-bar">
+    </mat-progress-bar>
+    <div class="progress-ticks">
+      <span>0%</span><span>50%</span><span>80%</span><span>100%</span>
+    </div>
+
+    <mat-divider class="divider" />
+
+    <!-- Badges -->
+    <div class="badges-section">
+      <p class="badges-title">
+        <mat-icon>workspace_premium</mat-icon>
+        Achievement Badges
+      </p>
+      <div class="badges-row">
+        @for (badge of allBadges; track badge.type) {
+          <app-progress-badge
+            [badgeType]="badge.type"
+            [earned]="hasBadge(badge.type)" />
+        }
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

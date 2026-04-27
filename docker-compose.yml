@@ -1,0 +1,75 @@
+# =============================================================================
+# docker-compose.yml — Sales Tracking Module
+# =============================================================================
+# Orquesta dos servicios:
+#   backend  → API Express/SQLite en el puerto 3002
+#   frontend → SPA Angular servida por nginx en el puerto 80
+#
+# Uso rápido:
+#   docker compose up --build        # primera vez (compila imágenes)
+#   docker compose up -d             # levanta en background
+#   docker compose down              # detiene y elimina contenedores
+#   docker compose down -v           # ídem + elimina el volumen de la DB
+#
+# URL de la API:
+#   Los servicios Angular apuntan a http://localhost:3002/api. Esto funciona
+#   porque la SPA se ejecuta en el navegador del usuario (no en el contenedor
+#   nginx), y el puerto 3002 del backend se expone en la máquina host.
+#   Si se despliega en un servidor remoto, reemplazar localhost por la IP o
+#   dominio del host en los servicios Angular antes de hacer el build.
+#
+# Base de datos SQLite:
+#   El archivo sales-tracking.db se persiste en el volumen nombrado
+#   "backend-data" mapeado a /app (directorio de trabajo del contenedor).
+#   Docker copia el contenido de la imagen al volumen en la primera ejecución
+#   y lo reutiliza en las siguientes, conservando los datos entre reinicios.
+#   Para resetear la DB: docker compose down -v
+# =============================================================================
+
+services:
+
+  # ── Backend ──────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sales-tracking-backend
+    ports:
+      - "3002:3002"
+    volumes:
+      # Solo persiste el directorio de datos (SQLite). El código en /app
+      # viene siempre de la imagen, evitando que el volumen congele versiones viejas.
+      - backend-data:/app/data
+    environment:
+      PORT: "3002"
+      NODE_ENV: production
+      CORS_ORIGIN: "http://localhost"
+      DB_PATH: "/app/data/sales-tracking.db"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3002/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ── Frontend ─────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sales-tracking-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+# =============================================================================
+# Volúmenes
+# =============================================================================
+volumes:
+  # Almacena únicamente /app/data (contiene sales-tracking.db).
+  # El código compilado en /app/dist y node_modules vienen de la imagen.
+  backend-data:

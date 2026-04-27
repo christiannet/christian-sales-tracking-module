@@ -1,0 +1,7 @@
+node_modules
+dist
+
+# Archivos de base de datos SQLite — se crean en tiempo de ejecución
+*.db
+*.db-shm
+*.db-wal
